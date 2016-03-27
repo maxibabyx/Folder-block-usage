@@ -1,15 +1,36 @@
 #ifndef directories_queue
 #define directories_queue
 
-// Estructura nodo, elementos en la cola de directorios
+/*
+	Estructura node:			Nodo de uno lista enlazada, con el path de un directorio y
+								apuntadores a sus nodos vecinos.
+
+	Miembros:	- char *path:	Apuntador a cararteres, donde se guarda el path del directorio
+				- node *next:	Apuntador a un a una estructura node, que indica el nodo vecino
+								siguiente
+				- char *prev:	Apuntador a un a una estructura node, que indica el nodo vecino
+								previo
+
+	Alias: node
+*/
 typedef struct node {
 	char *path;
 	struct node *next, *prev;
 } node;
 
 
-/* Cola de directorios, funciona como lista doblemente enlazada
-   con apuntador a la cabeza y a la cola */
+/*
+	Estructura dir_queue		Lista doblemente enlazada con apuntadores al primer y al último
+								elemento
+
+	Miembros:	- node *front:	Apuntador a estructura node, que indica el elemento al frente de
+								la cola
+				- node *back:	Apuntador a estructura node, que indica el elemento al final de
+								la cola
+				- int size:		Entero que guarda la cantidad de elementos que posee la cola
+
+	Alias: dir_queue
+*/
 typedef struct dir_queue {
 	node *front, *back;
 	int size;
