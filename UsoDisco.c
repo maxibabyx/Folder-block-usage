@@ -277,7 +277,7 @@ void *thread_work(void *th_param) {
 			pthread_mutex_unlock(&mutex); // Comentar este unlock si se usan los semáforos dentro de check_dir()
 		}
 	}
-	pthread_exit(NULL);
+	return(NULL);
 }
 
 /*
