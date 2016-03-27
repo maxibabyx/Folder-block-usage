@@ -192,7 +192,7 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 			}
 			exit(1);
 		}
-		// pthread_mutex_lock(&mutex);
+		//pthread_mutex_lock(&mutex);
 		switch ((inode -> st_mode) & S_IFMT) {
 			case S_IFBLK: 
 				fputs("(BLK)\t\t", fd);
@@ -234,7 +234,7 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 			total_blocks_checked += inode -> st_blocks;
 		}
 		fprintf(fd, "%s\n", real_path);
-		// pthread_mutex_unlock(&mutex);
+		//pthread_mutex_unlock(&mutex);
 	}
 	if (closedir(head_dir)) {
 		printf("Error al cerrar el directorio %s\n", top_dir);
@@ -325,7 +325,7 @@ void disk_check(cmd_param *init) {
 	fputs("TIPO\t\tBLOQUES\t\tPATH\n\n", fd);
 	total_blocks += check_dir(init -> dir, fd, th_param[0] -> return_queue, init -> outfile);
 	if (queue_size(th_param[0] -> return_queue)) {
-		fputs("\n---------------------------------------------------------------------------------------------------------\n\n", fd);
+		fputs("________________________________________________________________________________________________\n\n", fd);
 		fprintf(fd, "Subdirectorios de %s:\n\n\n", init -> dir);
 		move_nodes(&cola, th_param[0] -> return_queue);
 	}
