@@ -36,31 +36,60 @@ typedef struct dir_queue {
 	int size;
 } dir_queue;
 
-// Inserta un elemento en la cola, retorna el tamaño de la cola
+/*
+	Procedimiento push():			Al ejectuarse, crea un nuevo nodo, y hace una copia del path
+									pasado como argumento y se lo asigna al nodo y agrega al nodo
+									al final de la cola. Aumenta el tamaño de la cola en 1
+
+	Parámetros:	- dir_queue *q:		Apuntador a una estructura dir_queue
+				- char *push_path:	Apuntador a caracteres
+*/
 void push (dir_queue *q, char *push_path);
 
-// Elimina la cabeza de la cola, retorna un apuntador al elemento eliminado
+/*
+	Función push():				Al ejecutarse, crea una referencia a la cabeza de la cola, actualiza
+								la cabeza de la cola con el segundo elemento. Disminuye el tamaño de
+								la cola en 1
+
+	Parámetros:	- dir_queue *q:	Apuntador a una estructura dir_queue
+
+	Retorna:	- node *tmp:	Apuntador a la antigua cabeza de la cola q
+*/
 node * pop (dir_queue *q);
 
-// Devuelve el atributo "path" de la estructura nodo
+/*
+	Función push():						Al ejecutarse, devuelve el miembro 'path' de una estructura node
+
+	Parámetros:	- node *n:				Apuntador a una estructura node
+
+	Retorna:	- char *(tmp -> path):	Apuntador al path del nodo n
+*/
 char * node_path(node *n);
 
-// DEBUGGING - Imprime el path de cada uno de los elementos de la cola
-void print_queue(dir_queue *q);
+/*
+	Función queue_size():			Al ejecutarse, devuelve el miembro 'size' de una estructura dir_queue
 
-// DEBUGGING - Imprime el path de un nodo
-void print_node(node *n);
+	Parámetros:	- dir_queue *q:		Apuntador a una estructura dir_queue
 
-// Tamaño de la cola, retorna el número de elementos en la cola
+	Retorna:	- int (q- > size):	Entero con el tamaño de la cola q
+*/
 int queue_size (dir_queue *q);
 
-// DEBUGGING - Vacía la cola
-void clean_queue(dir_queue *q);
+/*
+	Procedimiento delete_node():	Al ejecutarse, elimina toda la información de un nodo, y toda la memoria
+									ocupada por el nodo es liberada
 
-// Mueve los nodos de una cola a otra
-void move_nodes(dir_queue *new_queue, dir_queue *old_queue);
+	Parámetros:	- node *n:			Apuntador a una estructura node
+*/
+void delete_node(node *n);
 
-// Destructor de un nodo
-void delete_node(node *nodo);
+/*
+	Procedimiento move_nodes():				Al ejecutarse, mueve los nodos de una estructura dir_queue origen
+											a una estructura dir_queue destino
+
+	Parámetros:	- dir_queue *dest_queue:	Apuntador a una estructura dir_queue
+	Parámetros:	- dir_queue *orig_queue:	Apuntador a una estructura dir_queue
+*/
+void move_nodes(dir_queue *dest_queue, dir_queue *orig_queue);
 
 #endif
