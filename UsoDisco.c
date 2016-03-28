@@ -186,10 +186,6 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 		if (stat(real_path, inode)) {
 			fprintf(fd, "Error al verificar el archivo %s en el directorio %s\n", dirent_ptr -> d_name, top_dir);
 			continue;
-			//if (fclose(fd)) {
-			//	printf("Error al cerrar el archivo de salida\n");
-			//}
-			//exit(1);
 		}
 		//pthread_mutex_lock(&mutex);
 		switch ((inode -> st_mode) & S_IFMT) {
