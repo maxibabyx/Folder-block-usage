@@ -174,7 +174,15 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 	memset(tmp_path, 0, PATH_MAX);
 	if ((head_dir = opendir(top_dir)) == NULL) {
 		fprintf(fd, "Error al abrir el directorio %s\n\n", top_dir);
-		return 0;
+		if (outfile != NULL) {
+			if (fclose(fd)) {
+				printf("Error al cerrar el archivo de escritura\n");
+			}
+			exit(1);
+		}
+		else {
+			return 0;
+		}
 		
 	};
 	while ((dirent_ptr = readdir(head_dir)) != NULL) {
@@ -438,7 +446,7 @@ void main (int argc, char *argv[]) {
 			invalid_args();
 		}
 	}
-	else if (argc >= 1) {
+	else if (argc >= 1 && argc % 2 == 1) {
 		int i;
 		for (i = 1; i < argc; i = i+2) {
 			strcpy(cmd, argv[i]);
