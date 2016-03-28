@@ -1,3 +1,7 @@
+/*
+	Las especificaciones de cada función en este archivo están comentadas
+	en el header dir_queue.h
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +24,7 @@ void push(dir_queue *q, char *push_path) {
 		q -> back -> prev = tmp;
 		q -> back = tmp;
 	}
-	q -> size++;
+	(q -> size)++;
 }
 
 node * pop(dir_queue *q) {
@@ -34,7 +38,7 @@ node * pop(dir_queue *q) {
 		q -> front = q -> back = NULL;
 	}
 	else if(!queue_size(q)) {return NULL;}
-	q -> size--;
+	(q -> size)--;
 	return tmp;
 }
 
@@ -42,48 +46,21 @@ char * node_path(node *n) {
 	return n -> path;
 }
 
-void print_queue(dir_queue *q) {
-	int i;
-	node *tmp = q -> front;
-	if (queue_size(q)) {
-		printf("\nFRONT\tNodo con path %s\n", node_path(tmp));
-		tmp = tmp -> prev;
-		for (i = 0; i < queue_size(q) - 1; i++) {
-			if (i != queue_size(q) - 2) {
-				printf("\tNodo con path %s\n", node_path(tmp));
-				tmp = tmp -> prev;
-			}
-			else {
-				printf("BACK\tNodo con path %s\n\n", node_path(tmp));
-
-			}
-		}
-	}
-	else if (!queue_size(q)) {printf("La cola está vacía\n");}
-	tmp = NULL;
-}
-
 int queue_size (dir_queue *q) {
 	return q -> size;
 }
 
-void clean_queue(dir_queue *q) {
-	while (queue_size(q)) {
-		delete_node(pop(q));
-	}
+void delete_node(node *n) {
+	free(node_path(n));
+	n -> next = NULL;
+	n -> prev = NULL;
+	free(n);
 }
 
-void delete_node(node *nodo) {
-	free(node_path(nodo));
-	nodo -> next = NULL;
-	nodo -> prev = NULL;
-	free(nodo);
-}
-
-void move_nodes(dir_queue *dest_queue, dir_queue *old_queue) {
+void move_nodes(dir_queue *dest_queue, dir_queue *orig_queue) {
 	node *tmp_node;
-	while (queue_size(old_queue)) {
-		tmp_node = pop(old_queue);
+	while (queue_size(orig_queue)) {
+		tmp_node = pop(orig_queue);
 		push(dest_queue, tmp_node -> path);
 		delete_node(tmp_node);
 	}
