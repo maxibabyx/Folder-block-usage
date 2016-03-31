@@ -173,24 +173,27 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 	memset(real_path, 0, PATH_MAX);
 	memset(tmp_path, 0, PATH_MAX);
 	if ((head_dir = opendir(top_dir)) == NULL) {
-		printf("Error al abrir el directorio %s\n", top_dir);
-		exit(1);
+		fprintf(fd, "Error al abrir el directorio %s\n\n", top_dir);
+		if (outfile != NULL) {
+			if (fclose(fd)) {
+				printf("Error al cerrar el archivo de escritura\n");
+			}
+			exit(1);
+		}
+		else {
+			return 0;
+		}
+		
 	};
 	while ((dirent_ptr = readdir(head_dir)) != NULL) {
 		if (!strcmp(dirent_ptr -> d_name, ".") || !strcmp(dirent_ptr -> d_name, "..") || (outfile != NULL && !strcmp(outfile, dirent_ptr -> d_name))) {
 			continue;
 		};
 		strcpy(real_path, top_dir);
-		if (real_path[strlen(real_path) - 1] != '/') {
-			strcat(real_path, slash);
-		}
 		strcat(real_path, dirent_ptr -> d_name);
 		if (stat(real_path, inode)) {
-			printf("Error al verificar el archivo %s en el directorio %s\n", dirent_ptr -> d_name, top_dir);
-			if (fclose(fd)) {
-				printf("Error al cerrar el archivo de salida\n");
-			}
-			exit(1);
+			fprintf(fd, "Error al verificar el archivo %s en el directorio %s\n", dirent_ptr -> d_name, top_dir);
+			continue;
 		}
 		//pthread_mutex_lock(&mutex);
 		switch ((inode -> st_mode) & S_IFMT) {
@@ -237,12 +240,12 @@ long long int check_dir(char *top_dir, FILE *fd, dir_queue *ret_queue, char* out
 		//pthread_mutex_unlock(&mutex);
 	}
 	if (closedir(head_dir)) {
-		printf("Error al cerrar el directorio %s\n", top_dir);
+		fprintf(fd, "Error al cerrar el directorio %s\n", top_dir);
 		exit(1);
 	}
 	// Comentar este IF si se activan utilizan los semáforos en check_dir(), puesto que el orden no está garantizado
 	if (outfile == NULL) {
-		fprintf(fd, "%lld bloques ocupados en el directorio %s\n\n", total_blocks_checked, top_dir);
+		fprintf(fd, "%lld bloques ocupados por archivos inmediatos en el directorio %s \n\n", total_blocks_checked, top_dir);
 	}
 	dirent_ptr = NULL;
 	free(tmp_path);
@@ -310,6 +313,10 @@ void disk_check(cmd_param *init) {
 	th_param[0] = (thread_param*)malloc(sizeof(thread_param));
 	th_param[0] -> return_queue = (dir_queue*)malloc(sizeof(dir_queue));
 	th_param[0] -> dir = (char*)malloc(PATH_MAX);
+
+	if ((init -> dir)[strlen(init -> dir) - 1] != '/') {
+		strcat(init -> dir, slash);
+	}
 	if (!strcmp(init -> outfile, "/dev/stdout")) {
 		strcpy(outfile_path, "/dev/stdout");
 	}
@@ -326,7 +333,7 @@ void disk_check(cmd_param *init) {
 	total_blocks += check_dir(init -> dir, fd, th_param[0] -> return_queue, init -> outfile);
 	if (queue_size(th_param[0] -> return_queue)) {
 		fputs("________________________________________________________________________________________________\n\n", fd);
-		fprintf(fd, "Subdirectorios de %s:\n\n\n", init -> dir);
+		fprintf(fd, "Subdirectorios de %s:\n\n", init -> dir);
 		move_nodes(&cola, th_param[0] -> return_queue);
 	}
 	else {
@@ -439,7 +446,7 @@ void main (int argc, char *argv[]) {
 			invalid_args();
 		}
 	}
-	else if (argc >= 1) {
+	else if (argc >= 1 && argc % 2 == 1) {
 		int i;
 		for (i = 1; i < argc; i = i+2) {
 			strcpy(cmd, argv[i]);
